@@ -1,0 +1,22 @@
+{
+    "name": "lci/clientsalsify",
+    "description": "PHP Client for Salsify PCM/PIM",
+    "keywords": [
+        "salsify",
+        "pim",
+        "pcm"
+    ],
+    "license": "GPL-2.0+",
+    "autoload": {
+        "psr-4": {
+            "LCI\\Salsify\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3"
+    }
+}
