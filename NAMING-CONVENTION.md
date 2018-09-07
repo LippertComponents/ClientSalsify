@@ -143,7 +143,7 @@ Before adding please follow
 
 ### ID 
 
-- Clear and consise 
+- Clear and concise 
 - Lowercase
 - Underscores (_) should be used in place of spaces
 - No other special characters, only _, 0-9 and a-z.
