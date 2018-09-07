@@ -13,7 +13,7 @@ taken out or updated.
 
 Most SKUs will come from an ERP and those SKUs need to be used. But sometimes they do not exist, either the product is 
 still in R&D, a Base Product is needed to group the various variants, or special usage like making a product a category. 
-If a follow the rules listed below.
+If a SKU is needed to be created follow the rules listed below.
 
 **General**
 
@@ -31,7 +31,7 @@ Example: **parent**-product-name
 
 ### Product as a Category
 
-- Its purpose is to holds category copy
+- Its purpose is to hold category copy and data
 - Set property is_product_category=Yes
 
 Use the general rules above and 
