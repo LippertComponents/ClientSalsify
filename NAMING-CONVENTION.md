@@ -11,13 +11,13 @@ taken out or updated.
 
 ## SKUs
 
-Most SKUs will come from an ERP and those SKUs need to be used. But sometimes they do not exist either the product is 
-still in R&D, a Base Product is needed to group the various variants, or special useage making a product a category. 
+Most SKUs will come from an ERP and those SKUs need to be used. But sometimes they do not exist, either the product is 
+still in R&D, a Base Product is needed to group the various variants, or special usage like making a product a category. 
 If a follow the rules listed below.
 
 **General**
 
-- Must not have an ERP SKU
+- Must not have a corresponding ERP SKU
 - lowercase
 - Use hyphens instead of spaces 
 - No other special characters, only -, 0-9 and a-z.
@@ -40,8 +40,6 @@ Use the general rules above and
 Example: **category**-category-name
 - Optional region, EU  
 Example: **category-eu**-category-name
-- If a child category prefix with category_parent SKU  
-Example: **category-parent-category**-child-name
 
 ### R&D
 
