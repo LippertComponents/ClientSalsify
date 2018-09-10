@@ -95,7 +95,7 @@ It is the responsibility of the rendering page to turn it into HTML or correct c
 
 - ~~All lowercase~~
 - Human understandable
-- Hyphens (-) should be used in place of spaces
+- Hyphens (-) should be used in place of spaces and underscores (_) between parts
 - No other special characters, only -, 0-9 and a-z
 - The name should be short and contain only the most basic identifying info, literally only enough to convey what it is
 - Descriptor chose: one left, right, top, bottom, front, or back. 
