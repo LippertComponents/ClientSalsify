@@ -8,8 +8,6 @@
 
 namespace LCI\Salsify\Helpers;
 
-
-use function GuzzleHttp\Psr7\build_query;
 use LCI\Salsify\Exceptions\ImageTransformationException;
 
 class ImageTransformation
