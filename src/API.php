@@ -87,6 +87,7 @@ class API
      * @param array $options
      *
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function doRequest($method, $path, $options=[])
     {
@@ -123,6 +124,14 @@ class API
         }
 
         return $response;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUri(): string
+    {
+        return $this->base_uri;
     }
 
     /**
