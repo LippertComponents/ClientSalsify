@@ -15,7 +15,6 @@ and a [DAM](https://en.wikipedia.org/wiki/Digital_asset_management "Digital Asse
 ## Required Composer Packages
 
 * http://docs.guzzlephp.org/en/latest/index.html
-* If you need to simulate Fake data http://climate.thephpleague.com/ 
 
 ## Features
 
