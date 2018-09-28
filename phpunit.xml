@@ -13,6 +13,9 @@
             <directory suffix="BulkAssetsTest.php">BulkAssetsTest</directory>
             <directory suffix="ProductsTest.php">ProductsTest</directory>
             <directory suffix="PropertyTest.php">PropertyTest</directory>
+            <directory suffix="ImageTransformationTest.php">ImageTransformationTest</directory>
+            <directory suffix="HTMLHelperTest.php">HTMLHelperTest</directory>
+
         </testsuite>
     </testsuites>
 
