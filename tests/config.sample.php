@@ -13,6 +13,9 @@ define('API_ORG_ID', '');
 /** @param string $token ~ see https://help.salsify.com/help/getting-started-api-auth */
 define('API_TOKEN', '');
 
+// A valid ID of the channel, look in the URL, to run get tests against
+define('CHANNEL_ID', '');
+
 // A valid ID of the digital asset list, look in the URL, to run export tests against
 define('LIST_ID_DIGITAL_ASSET', '');
 
