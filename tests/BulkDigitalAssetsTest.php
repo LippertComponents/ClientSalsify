@@ -1,8 +1,8 @@
 <?php
-use LCI\Salsify\Asset;
-use LCI\Salsify\BulkAssets;
+use LCI\Salsify\DigitalAsset;
+use LCI\Salsify\BulkDigitalAssets;
 
-class BulkAssetsTest extends BaseTestCase
+class BulkDigitalAssetsTest extends BaseTestCase
 {
     /** @var string  */
     protected $test_asset_id = 'test-api-asset';
@@ -11,8 +11,8 @@ class BulkAssetsTest extends BaseTestCase
 
     public function testCanCreateBulkAssets()
     {
-        /** @var BulkAssets $bulkAssets */
-        $bulkAssets = new BulkAssets(self::getApiInstance());
+        /** @var BulkDigitalAssets $bulkAssets */
+        $bulkAssets = new BulkDigitalAssets(self::getApiInstance());
         $response = $bulkAssets
             ->addAsset($this->getSampleAsset(1))
             ->addAsset($this->getSampleAsset(2))
@@ -39,15 +39,15 @@ class BulkAssetsTest extends BaseTestCase
      */
     public function testCanGetCreatedBulkAssets()
     {
-        /** @var BulkAssets $bulkAssets */
-        $bulkAssets = new BulkAssets(self::getApiInstance());
+        /** @var BulkDigitalAssets $bulkAssets */
+        $bulkAssets = new BulkDigitalAssets(self::getApiInstance());
         $assets = $bulkAssets
             ->addAssetId($this->test_asset_id.'-1')
             ->addAssetId($this->test_asset_id.'-2')
             ->addAssetId($this->test_asset_id.'-3')
             ->get();
 
-        /** @var Asset $asset */
+        /** @var DigitalAsset $asset */
         foreach ($assets as $asset) {
             $count = str_replace($this->test_asset_id.'-', '', $asset->getId());
             $compareAsset = $this->getSampleAsset($count);
@@ -77,8 +77,8 @@ class BulkAssetsTest extends BaseTestCase
      */
     public function testCanUpdateBulkAssets()
     {
-        /** @var BulkAssets $asset */
-        $asset = new BulkAssets(self::getApiInstance());
+        /** @var BulkDigitalAssets $asset */
+        $asset = new BulkDigitalAssets(self::getApiInstance());
         $response = $asset
             ->addAsset($this->getRandData(1))
             ->addAsset($this->getRandData(2))
@@ -98,8 +98,8 @@ class BulkAssetsTest extends BaseTestCase
      */
     public function testCanDeleteBulkAssets()
     {
-        /** @var BulkAssets $bulkAssets */
-        $bulkAssets = new BulkAssets(self::getApiInstance());
+        /** @var BulkDigitalAssets $bulkAssets */
+        $bulkAssets = new BulkDigitalAssets(self::getApiInstance());
         $response = $bulkAssets
             ->addAssetId($this->test_asset_id.'-1')
             ->addAssetId($this->test_asset_id.'-2')
@@ -119,8 +119,8 @@ class BulkAssetsTest extends BaseTestCase
      */
     public function testCanRefreshBulkAssets()
     {
-        /** @var BulkAssets $bulkAssets */
-        $bulkAssets = new BulkAssets(self::getApiInstance());
+        /** @var BulkDigitalAssets $bulkAssets */
+        $bulkAssets = new BulkDigitalAssets(self::getApiInstance());
         $response = $bulkAssets
             ->addAssetId($this->test_asset_id.'-1')
             ->addAssetId($this->test_asset_id.'-2')
@@ -136,7 +136,7 @@ class BulkAssetsTest extends BaseTestCase
     }
 
     /**
-     * @return Asset
+     * @return DigitalAsset
      */
     protected function getRandData($count=1)
     {
@@ -146,7 +146,7 @@ class BulkAssetsTest extends BaseTestCase
     /**
      * @param int $count
      * @param int $rand
-     * @return \LCI\Salsify\Asset
+     * @return \LCI\Salsify\DigitalAsset
      */
     protected function getSampleAsset($count = 1, $rand=1)
     {
@@ -165,7 +165,7 @@ class BulkAssetsTest extends BaseTestCase
                 break;
         }
 
-        $asset = new Asset(self::getApiInstance(), $this->test_asset_id.'-'.$count);
+        $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id.'-'.$count);
         $asset
             ->setSourceUrl($source_url)
             ->setName("Test API Asset Name {$rand}")

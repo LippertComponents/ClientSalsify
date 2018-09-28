@@ -9,7 +9,7 @@
 namespace LCI\Salsify;
 
 
-class BulkAssets
+class BulkDigitalAssets
 {
     /** @var API  */
     protected $api;
@@ -30,10 +30,10 @@ class BulkAssets
     }
 
     /**
-     * @param Asset $asset
+     * @param DigitalAsset $asset
      * @return $this
      */
-    public function addAsset(Asset $asset)
+    public function addAsset(DigitalAsset $asset)
     {
         $this->assets[] = $asset;
         if (!empty($asset->getId())) {
@@ -105,7 +105,7 @@ class BulkAssets
         } else {
             $items = json_decode($response->getBody(), true);
             foreach ($items as $item) {
-                $asset = new Asset($this->api);
+                $asset = new DigitalAsset($this->api);
                 $asset->setFromArray($item, true);
 
                 $assets[] = $asset;
@@ -148,7 +148,7 @@ class BulkAssets
     protected function assetsToArray($type='create')
     {
         $array = [];
-        /** @var Asset $asset */
+        /** @var DigitalAsset $asset */
         foreach ($this->assets as $asset) {
             $array[] = $asset->toArray($type);
         }

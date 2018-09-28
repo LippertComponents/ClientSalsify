@@ -1,7 +1,7 @@
 <?php
-use LCI\Salsify\Asset;
+use LCI\Salsify\DigitalAsset;
 
-class AssetTest extends BaseTestCase
+class DigitalAssetTest extends BaseTestCase
 {
     /** @var string  */
     protected $test_asset_id = 'test-api-asset';
@@ -10,8 +10,8 @@ class AssetTest extends BaseTestCase
 
     public function testCanCreateAsset()
     {
-        /** @var Asset $asset */
-        $asset = new Asset(self::getApiInstance());
+        /** @var DigitalAsset $asset */
+        $asset = new DigitalAsset(self::getApiInstance());
         $response = $asset
             ->setSourceUrl($this->source_url)
             ->setId($this->test_asset_id)
@@ -33,8 +33,8 @@ class AssetTest extends BaseTestCase
      */
     public function testCanGetCreatedAsset()
     {
-        /** @var Asset $asset */
-        $asset = new Asset(self::getApiInstance(), $this->test_asset_id);
+        /** @var DigitalAsset $asset */
+        $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id);
         $attributes = $asset
             ->get();
 
@@ -53,8 +53,8 @@ class AssetTest extends BaseTestCase
      */
     public function testCanUpdateAsset()
     {
-        /** @var Asset $asset */
-        $asset = new Asset(self::getApiInstance(), $this->test_asset_id);
+        /** @var DigitalAsset $asset */
+        $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id);
         $response = $asset
             ->fromArray($this->getRandData())
             ->update();
@@ -74,8 +74,8 @@ class AssetTest extends BaseTestCase
     {
         sleep(2);
 
-        /** @var Asset $asset */
-        $asset = new Asset(self::getApiInstance(), $this->test_asset_id);
+        /** @var DigitalAsset $asset */
+        $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id);
         $response = $asset
             ->refresh();
 
@@ -95,8 +95,8 @@ class AssetTest extends BaseTestCase
     {
         sleep(3);
 
-        /** @var Asset $asset */
-        $asset = new Asset(self::getApiInstance(), $this->test_asset_id);
+        /** @var DigitalAsset $asset */
+        $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id);
         $response = $asset
             ->delete();
 

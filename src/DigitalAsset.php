@@ -10,7 +10,7 @@ namespace LCI\Salsify;
 
 use LCI\Salsify\Helpers\Syntax;
 
-class Asset
+class DigitalAsset
 {
     use Syntax;
 
@@ -95,7 +95,7 @@ class Asset
 
             $method_name = 'set'.$this->makeStudyCase($key);
 
-            if (method_exists($this, $method_name)) {
+            if (method_exists($this, $method_name) && $method_name !== 'setFromArray') {
                 $this->$method_name($value);
 
             } elseif ($set_protected && property_exists($this, $key)) {
@@ -378,7 +378,7 @@ class Asset
      * @param string $id
      * @return $this
      */
-    public function setId(string $id): Asset
+    public function setId(string $id): DigitalAsset
     {
         $this->id = $id;
         return $this;
@@ -388,7 +388,7 @@ class Asset
      * @param string $name
      * @return $this
      */
-    public function setName(string $name): Asset
+    public function setName(string $name): DigitalAsset
     {
         $this->name = $name;
         return $this;
@@ -420,7 +420,7 @@ class Asset
      *
      * @return $this
      */
-    public function setMeta(string $name, $value): Asset
+    public function setMeta(string $name, $value): DigitalAsset
     {
         $this->meta[$name] = $value;
         return $this;

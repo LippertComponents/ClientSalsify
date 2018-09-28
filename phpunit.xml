@@ -9,8 +9,8 @@
          verbose="true">
     <testsuites>
         <testsuite name="default">
-            <directory suffix="AssetTest.php">AssetTest</directory>
-            <directory suffix="BulkAssetsTest.php">BulkAssetsTest</directory>
+            <directory suffix="DigitalAssetTest.php">DigitalAssetTest</directory>
+            <directory suffix="BulkDigitalAssetsTest.php">BulkDigitalAssetsTest</directory>
             <directory suffix="ProductsTest.php">ProductsTest</directory>
             <directory suffix="PropertyTest.php">PropertyTest</directory>
             <directory suffix="ImageTransformationTest.php">ImageTransformationTest</directory>

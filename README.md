@@ -45,7 +45,9 @@ Note these methods may avoid workflows and channels
 
 ### Digital Asset
 
-[\LCI\Salsify\Asset](src/Asset.php) and examples in [tests/AssetTest.php](tests/AssetTest.php)
+- [\LCI\Salsify\DigitalAsset](src/DigitalAsset.php) and examples in [tests/DigitalAssetTest.php](tests/DigitalAssetTest.php)
+- [\LCI\Salsify\BulkDigitalAsset](src/BulkDigitalAssets.php) and examples in [tests/BulkDigitalAssetsTest.php](tests/BulkDigitalAssetsTest.php)
+
 
 - [x] get() Read
 - [x] create()
