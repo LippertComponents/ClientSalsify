@@ -18,17 +18,8 @@ use LCI\Salsify\Exceptions\ExportException;
  *
  * @package LCI\Salsify
  */
-class RawExports
+class RawExports extends PreV1Routes
 {
-    /** @var API  */
-    protected $api;
-
-    /** @var string  */
-    protected $original_base_url = '';
-
-    /** @var mixed|string  */
-    protected $base_url = '';
-
     /** @var string  */
     protected $entity_type = 'product';
 
@@ -49,19 +40,6 @@ class RawExports
 
     /** @var int ~ how many times to check before failing */
     protected $check_limit = 10;
-
-    /**
-     * Exports constructor.
-     * @param API $api
-     */
-    public function __construct(API $api)
-    {
-        $this->api = $api;
-
-        // @TODO the v1/ is not valid for this route, will it always be that way?
-        $this->base_url = str_replace('v1/', '', $this->api->getBaseUri());
-        $this->original_base_url = $this->api->getBaseUri();
-    }
 
     /**
      * @param string $key
@@ -259,22 +237,6 @@ class RawExports
         }
 
         return $file;
-    }
-
-    /**
-     * @return void
-     */
-    protected function setAPIBaseUrl()
-    {
-        $this->api->setBaseUri($this->base_url);
-    }
-
-    /**
-     * @return void
-     */
-    protected function restoreAPIBaseUrl()
-    {
-        $this->api->setBaseUri($this->original_base_url);
     }
 
     /**
