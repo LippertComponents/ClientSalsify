@@ -18,7 +18,7 @@ and a [DAM](https://en.wikipedia.org/wiki/Digital_asset_management "Digital Asse
 
 ## Features
 
-###Products
+### Products
 
 Note these methods may avoid workflows and channels  
 [\LCI\Salsify\Product](src/Product.php) [Examples](tests/ProductTest.php)
@@ -28,7 +28,7 @@ Note these methods may avoid workflows and channels
 - [x] update()
 - [x] delete()
 
-###Property
+### Property
 
 [\LCI\Salsify\Property](src/Property.php) [Examples](tests/PropertyTest.php)
 
@@ -38,12 +38,12 @@ Note these methods may avoid workflows and channels
 - [x] delete()
 - [ ] getValues()
 
-###BulkProperties
+### BulkProperties
 @TODO
 
 - [ ] getMany()
 
-###Digital Asset
+### Digital Asset
 
 [\LCI\Salsify\Asset](src/Asset.php) and examples in [tests/AssetTest.php](tests/AssetTest.php)
 
@@ -54,14 +54,14 @@ Note these methods may avoid workflows and channels
 - [ ] refresh() ~ fails tests, needed if the source image gets updated but has the same URL 
 to trigger Salsify to reprocess
 
-###Channel
+### Channel
 
 [\LCI\Salsify\Channel](src/Channel.php) and examples in [tests/ChannelTest.php](tests/ChannelTest.php)
 
 - [x] getChannelData($channel_id)
 - [x] saveLatestChannel($channel_id, $full_file_path)
 
-###RawExports
+### RawExports
 
 [\LCI\Salsify\RawExports](src/RawExports.php) and examples in [tests/RawExportTest.php](tests/RawExportsTest.php)
 
@@ -71,12 +71,7 @@ to trigger Salsify to reprocess
 - [x] getExportRunStatus($export_id) retrieve status of export
 - [x] saveExportReport($export_id, $full_file_name) ~ save report to disk
 
-###RawExports
-
-[\LCI\Salsify\RawExports](src/RawExports.php) and examples in [tests/RawExportTest.php](tests/RawExportsTest.php)
-
-
-###Helpers
+### Helpers
 
 - [\LCI\Salsify\Helpers\ImageTransformation.php](src/Helpers/ImageTransformation.php) and examples in 
  [tests/ImageTransformationTest.php](tests/ImageTransformationTest.php)
