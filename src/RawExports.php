@@ -141,6 +141,30 @@ class RawExports extends PreV1Routes
     }
 
     /**
+     *
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function initExportProperties()
+    {
+        $this->entity_type = 'attribute';
+
+        return $this->initExport();
+    }
+
+    /**
+     *
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function initExportPropertyValues()
+    {
+        $this->entity_type = 'attribute_value';
+
+        return $this->initExport();
+    }
+
+    /**
      * @param int $list_id ~ ID of list
      *
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
@@ -156,6 +180,18 @@ class RawExports extends PreV1Routes
     }
 
     /**
+     *
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function initExportRelations()
+    {
+        $this->entity_type = 'relation';
+
+        return $this->initExport();
+    }
+
+    /**
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -166,13 +202,23 @@ class RawExports extends PreV1Routes
         $data = [
             "configuration" => [
                 "entity_type" => $this->entity_type,
-                "filter" => $this->filter,
                 "properties" => $this->makePropsString($this->include_properties),
                 "include_all_columns" => true,
                 "format" => $this->format,
                 "product_type" => $this->product_type
             ]
+            /**
+                duration	null
+                end_time	null
+                failure_reason	null
+                progress	0
+                start_time	null
+                status
+             */
         ];
+        if (!empty($this->filter)) {
+            $data['configuration']['filter'] = $this->filter;
+        }
 
         $response = $this->api->doRequest('POST', 'export_runs', ['json' => $data]);
 

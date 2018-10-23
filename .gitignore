@@ -137,3 +137,4 @@ local.properties
 /temp/
 /tests/config.php
 /src/v1/
+/tests/temp/
