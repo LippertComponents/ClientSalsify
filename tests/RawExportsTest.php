@@ -25,6 +25,52 @@ class RawExportsTest extends BaseTestCase
             $rawExports
         );
     }
+    /**
+     * @depends testInitRawExports
+     */
+    public function testAllDigitalAssetsRawExports()
+    {
+        /** @var RawExports $rawExports */
+        $rawExports = new RawExports(self::getApiInstance());
+
+        /** @var \GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface $salsifyResponse */
+        $salsifyResponse = $rawExports
+            ->initExportAllDigitalAssets();
+
+        $this->assertEquals(
+            '201',
+            $salsifyResponse->getStatusCode(),
+            'Failed to init a raw export for initExportAllDigitalAssets '.$salsifyResponse->getReasonPhrase(). PHP_EOL.
+            $salsifyResponse->getBody()
+        );
+
+        $json = json_decode($salsifyResponse->getBody(), true);
+
+        $this->assertArrayHasKey(
+            'id',
+            $json,
+            'A key of id was not returned in the $rawExports->initExportAllDigitalAssets request'
+        );
+
+        $file = __DIR__ . '/temp/da_all.csv';
+
+        try {
+            $file = $rawExports
+                ->setStatusCheckDelay(20)
+                ->saveExportReport($json['id'], $file);
+
+        } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+            $this->assertEmpty(
+                $exception->getMessage(),
+                '$rawExports->saveExportReport failed'
+            );
+        }
+
+        $this->assertFileExists(
+            $file,
+            '$rawExports->saveExportReport did not save the report contents to disk'
+        );
+    }
 
     /**
      * @depends testInitRawExports

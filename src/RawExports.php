@@ -32,6 +32,9 @@ class RawExports extends PreV1Routes
     /** @var array  */
     protected $include_properties = [];
 
+    /** @var null|bool */
+    protected $include_all_content_locales = null;
+
     /** @var string  */
     protected $product_type = 'all';
 
@@ -180,6 +183,22 @@ class RawExports extends PreV1Routes
     }
 
     /**
+     * @param int $list_id ~ ID of list
+     *
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function initExportAllDigitalAssets()
+    {
+        $this->entity_type = 'digital_asset';
+
+        $this->filter = '';
+        $this->include_all_content_locales = true;
+
+        return $this->initExport();
+    }
+
+    /**
      *
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -216,8 +235,13 @@ class RawExports extends PreV1Routes
                 status
              */
         ];
+
         if (!empty($this->filter)) {
             $data['configuration']['filter'] = $this->filter;
+        }
+
+        if (!is_null($this->include_all_content_locales)) {
+            $data['configuration']['include_all_content_locales'] = $this->include_all_content_locales;
         }
 
         $response = $this->api->doRequest('POST', 'export_runs', ['json' => $data]);
