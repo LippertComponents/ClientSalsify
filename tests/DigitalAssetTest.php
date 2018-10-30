@@ -56,7 +56,7 @@ class DigitalAssetTest extends BaseTestCase
         /** @var DigitalAsset $asset */
         $asset = new DigitalAsset(self::getApiInstance(), $this->test_asset_id);
         $response = $asset
-            ->fromArray($this->getRandData())
+            ->setFromArray($this->getRandData(), true)
             ->update();
 
         $this->assertEquals(

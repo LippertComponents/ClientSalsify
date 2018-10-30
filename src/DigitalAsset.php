@@ -42,7 +42,7 @@ class DigitalAsset
     /** @var bool  */
     protected $is_primary_image = true; //": true,
     /** @var string|null */
-    protected $resource_type; // "image" ~ asset_resource_type
+    protected $resource_type = 'image'; // "image" ~ asset_resource_type
     /** @var string|null */
     protected $status;
     /** @var string|null */
@@ -76,10 +76,10 @@ class DigitalAsset
 
     /**
      * @param array $data
-     * @param bool $set_protected
+     * @param bool $allow_lazy - allow to set salsify protected values without the salsify: part
      * @return $this
      */
-    public function setFromArray(array $data, bool $set_protected=false)
+    public function setFromArray(array $data, bool $allow_lazy=false)
     {
         foreach ($data as $key => $value) {
             if (empty($key)) {
@@ -95,10 +95,10 @@ class DigitalAsset
 
             $method_name = 'set'.$this->makeStudyCase($key);
 
-            if (method_exists($this, $method_name) && $method_name !== 'setFromArray') {
+            if ($this->allowSet($allow_lazy, count($parts)) && method_exists($this, $method_name) && $method_name !== 'setFromArray') {
                 $this->$method_name($value);
 
-            } elseif ($set_protected && property_exists($this, $key)) {
+            } elseif ($this->allowSet($allow_lazy, count($parts)) && property_exists($this, $key) && !in_array($key, ['api', 'meta'])) {
                 $this->$key = $value;
 
             } else {
@@ -108,6 +108,18 @@ class DigitalAsset
         }
 
         return $this;
+    }
+
+    /**
+     * @param bool $allow
+     * @param int $count
+     * @return bool
+     */
+    protected function allowSet($allow, $count)
+    {
+        if ($allow || $count > 1) {
+            return true;
+        }
     }
 
     /**

@@ -39,7 +39,7 @@ class DigitalAssets
                 $id = $row['salsify:id'];
             }
             $da = new DigitalAsset($this->api, $id);
-            $assets[$id] = $da->fromArray($row);
+            $assets[$id] = $da->setFromArray($row);
         }
 
         return $assets;
