@@ -45,17 +45,84 @@ trait Source
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getRawArray()
+    {
+        return $this->flat_source;
+    }
 
     protected function loadFlatSourceFromCSV()
     {
         $csv = Reader::createFromPath($this->source_csv, 'r');
 
-        $csv->setHeaderOffset(0);
+        $index_map = $csv->fetchOne();
 
-        $header = $csv->getHeader(); //returns the CSV header record
-        /** @var IteratorAggregate $records */
-        //$records = $csv->getRecords(); //returns all the CSV records as an Iterator object
+        $header_map = $this->getHeaderMap($index_map);
 
-        $this->flat_source = (new Statement())->process($csv);
+        $rows = $csv->getRecords();
+
+        $count = 0;
+        $this->flat_source = [];
+        // Rows can share headers to need to make them arrays to not lose values
+        foreach ($rows as $row) {
+            if ($count++ == 0) {
+                continue;
+            }
+            $this->flat_source[] = $this->mapRowToHeaders($row, $index_map, $header_map);
+        }
+    }
+
+    /**
+     * @param array $first_row
+     * @return array
+     */
+    protected function getHeaderMap($first_row=[])
+    {
+        // name => type ~ single/array
+        $map = [];
+
+        foreach ($first_row as $count => $name) {
+            $type = 'single';
+            if (isset($map[$name])) {
+                $type = 'array';
+            }
+
+            $map[$name] = $type;
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param array $row
+     * @param array $index_map
+     * @param array $header_map
+     * @return array
+     */
+    protected function mapRowToHeaders(array $row, array $index_map, array $header_map)
+    {
+        $data = [];
+        foreach ($row as $count => $value) {
+            $header = $index_map[$count];
+
+            if ($header_map[$header] == 'array') {
+                if (!isset($data[$header])) {
+                    $data[$header] = [];
+                }
+
+                if (empty($value)) {
+                    continue;
+                }
+                $data[$header][] = $value;
+
+            } else {
+                $data[$header] = $value;
+
+            }
+        }
+
+        return $data;
     }
 }

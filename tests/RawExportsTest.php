@@ -73,6 +73,31 @@ class RawExportsTest extends BaseTestCase
     }
 
     /**
+     * @depends testAllDigitalAssetsRawExports
+     */
+    public function testDigitalAssetsHelper()
+    {
+        $helper = new \LCI\Salsify\Helpers\DigitalAssets(self::getApiInstance());
+
+        $helper
+            ->loadSourceFromCsv(__DIR__ . '/temp/da_all.csv');
+
+        $assets = $helper->getAssetsAsDigitalAsset();
+
+        $this->assertEquals(
+            true,
+            is_array($assets),
+            __METHOD__.' check that array was returned for $helper->getAssetsAsDigitalAsset()'
+        );
+
+        $this->assertInstanceOf(
+            "\LCI\Salsify\DigitalAsset",
+            array_pop($assets),
+            __METHOD__.' check that array has returned a valid object'
+        );
+    }
+
+    /**
      * @depends testInitRawExports
      */
     public function testDigitalAssetListRawExports()
