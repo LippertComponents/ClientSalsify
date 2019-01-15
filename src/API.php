@@ -135,6 +135,14 @@ class API
     }
 
     /**
+     * @return string
+     */
+    public function getSalsifyOrgId(): string
+    {
+        return $this->salsify_org_id;
+    }
+
+    /**
      * @return array
      */
     public function getRequestData()

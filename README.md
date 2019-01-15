@@ -79,3 +79,60 @@ to trigger Salsify to reprocess
  [tests/ImageTransformationTest.php](tests/ImageTransformationTest.php)
 -  [\LCI\Salsify\Helpers\HTML.php](src/Helpers/HTML.php) and examples in 
    [tests/HTMLHelperTest.php](tests/HTMLHelperTest.php)
+   
+#### Web Hooks
+
+[Digital Asset Webhooks](https://developers.salsify.com/docs/digital-asset-webhooks)
+
+Slim example: PS&-7 Webhook helper 
+
+1. Create a route
+2. See the example method below
+3. Set up in Salsify, [subscribe to your new route](https://help.salsify.com/help/setting-up-product-change-alerts-in-salsify)
+
+```php
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param array $args
+     *
+     * @return Response
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function digitalAssetWebHook(Request $request, Response $response, array $args)
+    {
+        $this->loadSalsify();
+        $webhookHelper = new \LCI\Salsify\Helpers\Webhooks(
+            $this->salsify,
+            $request->getUri()
+        );
+
+        $webhookHelper
+            ->setCertUrl($request->getHeaderLine('X-Salsify-Cert-Url'))
+            ->setRequestBody($request->getBody())
+            ->setRequestId($request->getHeaderLine('X-Salsify-Request-ID'))
+            ->setSignature($request->getHeaderLine('X-Salsify-Signature-v1'))
+            ->setTimestamp((int)$request->getHeaderLine('X-Salsify-Timestamp'));
+
+        // the second paramater is a bool for whether or not to validate the SSL cert, this is still experimental
+        // There are 3 validation checks before the SSL cert check
+        if ($webhookHelper->verifyRequest($request->getHeaderLine('X-Salsify-Organization-ID'), false)) {
+            
+            $assets = $webhookHelper->getDigitalAssetsFromRequestBody();
+            // Valid now do something:
+            switch ($webhookHelper->getTriggerType()) {
+                case 'add':
+                    // new 
+                    break;
+                case 'change':
+                    // this is an update to the item
+                    break;
+                case 'remove':
+                    break;
+            }
+        };
+        
+        ...
+    }
+```

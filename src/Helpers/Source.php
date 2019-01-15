@@ -23,7 +23,15 @@ trait Source
     protected $flat_source = [];
 
     /**
-     * @param string $source_csv
+     * @return array
+     */
+    public function getRawArray()
+    {
+        return $this->flat_source;
+    }
+
+    /**
+     * @param string $source_csv - full file path of CSV
      * @return $this
      */
     public function loadSourceFromCsv(string $source_csv)
@@ -34,8 +42,9 @@ trait Source
 
         return $this;
     }
+
     /**
-     * @param string $source_json
+     * @param string $source_json - full file path of JSON file
      * @return $this
      */
     public function loadSourceFromJson(string $source_json)
@@ -46,11 +55,14 @@ trait Source
     }
 
     /**
-     * @return array
+     * @param array $data - a valid array of Salsify objects like:
+     * @return $this
      */
-    public function getRawArray()
+    public function setSourceData(array $data)
     {
-        return $this->flat_source;
+        $this->flat_source = $data;
+
+        return $this;
     }
 
     protected function loadFlatSourceFromCSV()

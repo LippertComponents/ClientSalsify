@@ -8,6 +8,7 @@
 
 namespace LCI\Salsify\Helpers;
 
+use LCI\Salsify\API;
 use phpseclib\File\X509;
 
 /**
@@ -22,6 +23,9 @@ class Webhooks
 {
     /** @var string  */
     const EXPECTED_CERTIFICATE_HOST = 'webhooks-auth.salsify.com';
+
+    /** @var API  */
+    protected $api;
 
     /** @var int in seconds */
     protected $max_request_age = 300;
@@ -45,6 +49,9 @@ class Webhooks
     /** @var string  */
     protected $request_body = '';
 
+    /** @var bool|array */
+    protected $request_body_json = false;
+
     /** @var string X-Salsify-Organization-ID - Salsify organization ID associated with the event.
      * the organization ID which is unique to each Salsify app instance. The org ID can be found after /orgs/ in the
      * URL path for your Salsify organization, eg. in https://app.salsify.com/app/orgs/9-99999-9999-9999-9999-999999999/products
@@ -57,15 +64,56 @@ class Webhooks
 
     /**
      * Webhooks constructor.
-     * @param string $organization_id
+     * @param API $api
      * @param string $webhook_url - the URL that has been set in Salsify
      * @param int $max_request_age - in seconds, recommended is 300 (5 minutes)
      */
-    public function __construct(string $organization_id, string $webhook_url, int $max_request_age=300)
+    public function __construct(API $api, string $webhook_url, int $max_request_age=300)
     {
-        $this->organization_id = $organization_id;
+        $this->api = $api;
+        $this->organization_id = $this->api->getSalsifyOrgId();
         $this->webhook_url = $webhook_url;
         $this->max_request_age = $max_request_age;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestBody(): string
+    {
+        return $this->request_body;
+    }
+
+    /**
+     * @return array - [DigitalAsset $asset, ... ]
+     */
+    public function getDigitalAssetsFromRequestBody()
+    {
+        $assets = [];
+
+        if (is_array($this->request_body_json) && isset($this->request_body_json['digital_assets']) &&
+            is_array($this->request_body_json['digital_assets']) && count($this->request_body_json['digital_assets']) > 0) {
+            $digitalAssets = new DigitalAssets($this->api);
+            $assets = $digitalAssets
+                ->setSourceData($this->request_body_json['digital_assets'])
+                ->getAssetsAsDigitalAsset();
+        }
+
+        return $assets;
+    }
+
+    /**
+     * @return bool|string - false if no valid value or string: add, change and remove
+     * @see https://developers.salsify.com/docs/digital-asset-webhooks
+     */
+    public function getTriggerType()
+    {
+        // "alert":{"id":"9-999","name":"My Webhook Name","trigger_type":"change"}
+        if (is_array($this->request_body_json) && isset($this->request_body_json['alert']) && isset($this->request_body_json['alert']['trigger_type'])) {
+            return $this->request_body_json['alert']['trigger_type'];
+        }
+
+        return false;
     }
 
     /**
@@ -115,21 +163,42 @@ class Webhooks
     public function setRequestBody(string $request_body): Webhooks
     {
         $this->request_body = $request_body;
+        $this->request_body_json = json_decode($this->request_body, true);
         return $this;
     }
 
     /**
+     * @param string $request_organization_id - the salsify organization id that is passed from the request if any
+     * @param bool $valid_signature
      * @return bool
+     * @throws \Exception
      */
-    public function verifyRequest()
+    public function verifyRequest($request_organization_id, $valid_signature=true)
     {
         return $this
+            ->validOrgId($request_organization_id)
             ->validTimestamp()
             ->validCertificateUrl()
-            ->validSignature()
+            ->validSignature($valid_signature)
             ->valid_request;
     }
 
+    /**
+     * @param string $organization_id
+     * @return $this
+     */
+    protected function validOrgId($organization_id)
+    {
+        if ($this->organization_id != $organization_id) {
+            $this->valid_request = false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     protected function validTimestamp()
     {
         if ($this->max_request_age < time() - $this->timestamp) {
@@ -139,6 +208,9 @@ class Webhooks
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     protected function validCertificateUrl()
     {
         /** @var array|false $uri */
@@ -159,40 +231,48 @@ class Webhooks
         return $this;
     }
 
-    protected function validSignature()
+    /**
+     * @param bool $run_validation
+     * @return $this
+     * @throws \Exception
+     */
+    protected function validSignature($run_validation=true)
     {
-        if ($this->valid_request && 1==1) {
-            // @TODO
-            echo $this->cert_url.PHP_EOL;
+        if ($this->valid_request && $run_validation) {
 
             /** @var X509 $x509 */
             $x509 = new X509();
-
+            // @TODO user guzzle: to GET cert
             /** @var array $cert */
-            $cert = $x509->loadX509($this->cert_url);
+            $cert = $x509->loadX509(file_get_contents($this->cert_url));
 
-            $cert['signature'];
-
-            $x509->validateSignature();
-
-            print_r($cert);
-
-            $signature = base64_decode($cert['signature']);
-
-            echo $signature.PHP_EOL;
-
-            if ($signature != $this->makeHeaderString()) {
-                $this->valid_request = false;
-                echo __METHOD__.' Failed' . __LINE__.PHP_EOL;
-            }
-
-            /* verify the signature
-            $cert->public_key->verify(
+            /**
+             * Related Ruby code:
+             * # verify the signature
+                cert.public_key.verify(
                 OpenSSL::Digest::SHA256.new,
                 Base64.strict_decode64(signature),
                 signature_data
-              );
-            */
+                )
+             */
+            $response = openssl_verify(
+                $this->makeHeaderString(),
+                $cert['signature'], // should this be base64_decode($cert['signature'])?
+                $x509->getPublicKey(),
+                'sha512'
+            );
+
+            if ($response === 1) {
+
+            } elseif ($response === 0) {
+                $this->valid_request = false;
+
+            } else {
+                // @TODO
+                throw new \Exception(openssl_error_string());
+            }
+
+            //$x509->_validateSignature('', $x509->getPublicKey(), '', $cert['signature'], $x509->signatureSubject);
         }
 
         return $this;
@@ -202,7 +282,4 @@ class Webhooks
     {
         return hash('sha256', "{$this->timestamp}.{$this->request_id}.{$this->organization_id}.{$this->webhook_url}.{$this->request_body}");
     }
-
-
-
 }
