@@ -14,6 +14,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\RequestOptions;
 
 class API
 {
@@ -43,6 +44,21 @@ class API
      * the org ID is 9-99999-9999-9999-9999-999999999.
      */
     protected $salsify_org_id;
+
+    /** @var float
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html#connect-timeout
+     */
+    protected $connect_timeout = 0;
+
+    /** @var float
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html#read-timeout
+     */
+    protected $read_timeout = 100;
+
+    /** @var float - how long to wait before time the request out in seconds:
+     * @see: http://docs.guzzlephp.org/en/stable/request-options.html#timeout
+     */
+    protected $timeout = 0;
 
     /** @var  string private API key */
     protected $token;
@@ -113,6 +129,15 @@ class API
             if (!is_object($this->client) || !$this->client instanceof Client) {
                 $this->loadClient();
             }
+
+            $options = array_merge([
+                    RequestOptions::CONNECT_TIMEOUT => $this->getConnectTimeout(),
+                    RequestOptions::READ_TIMEOUT => $this->getReadTimeout(),
+                    RequestOptions::TIMEOUT => $this->getTimeout()
+                ],
+                $options
+            );
+
             $response = $this->client->request($method, $path, $options);
 
         } catch (RequestException $exception) {
@@ -151,6 +176,30 @@ class API
     }
 
     /**
+     * @return float
+     */
+    public function getConnectTimeout(): float
+    {
+        return $this->connect_timeout;
+    }
+
+    /**
+     * @return float
+     */
+    public function getReadTimeout(): float
+    {
+        return $this->read_timeout;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTimeout(): float
+    {
+        return $this->timeout;
+    }
+
+    /**
      * @param string $base_uri
      * @return API
      */
@@ -177,6 +226,39 @@ class API
     public function setSalsifyOrgId(string $salsify_org_id): API
     {
         $this->salsify_org_id = $salsify_org_id;
+        return $this;
+    }
+
+    /**
+     * @param float $connect_timeout
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html#connect-timeout
+     * @return API
+     */
+    public function setConnectTimeout(float $connect_timeout): API
+    {
+        $this->connect_timeout = $connect_timeout;
+        return $this;
+    }
+
+    /**
+     * @param float $read_timeout
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html#read-timeout
+     * @return API
+     */
+    public function setReadTimeout(float $read_timeout): API
+    {
+        $this->read_timeout = $read_timeout;
+        return $this;
+    }
+
+    /**
+     * @param float $timeout - seconds, default is 15.0
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html#timeout
+     * @return API
+     */
+    public function setTimeout(float $timeout): API
+    {
+        $this->timeout = $timeout;
         return $this;
     }
 
@@ -219,7 +301,7 @@ class API
     {
         $this->client = new Client([
             'base_uri' => $this->base_uri, // Base URI is used with relative requests
-            'timeout' => 15.0, // You can set any number of default request options.
+            'timeout' => $this->timeout, // You can set any number of default request options.
             'http_errors' => false, // http://docs.guzzlephp.org/en/latest/request-options.html#http-errors
             'verify' => $this->verify_ssl, // local windows machines sometimes give issues here
             'headers' => $this->client_headers, // http://docs.guzzlephp.org/en/latest/request-options.html#headers
