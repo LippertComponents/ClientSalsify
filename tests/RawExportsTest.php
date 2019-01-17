@@ -29,6 +29,59 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
+    public function testAllDataRawExports()
+    {
+        /** @var RawExports $rawExports */
+        $rawExports = new RawExports(self::getApiInstance());
+
+        /** @var \GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface $salsifyResponse */
+        $salsifyResponse = $rawExports
+            ->initExportAllData();
+
+        $this->assertEquals(
+            '201',
+            $salsifyResponse->getStatusCode(),
+            'Failed to init a raw export for initExportAllData '.$salsifyResponse->getReasonPhrase(). PHP_EOL.
+            $salsifyResponse->getBody()
+        );
+
+        $json = json_decode($salsifyResponse->getBody(), true);
+
+        $this->assertArrayHasKey(
+            'id',
+            $json,
+            'A key of id was not returned in the $rawExports->initExportAllData request'
+        );
+
+        $file = __DIR__ . '/temp/all_data.json';
+
+        try {
+            $file = $rawExports
+                ->setStatusCheckDelay(30)
+                ->setCheckLimit(50)
+                ->saveExportReport($json['id'], $file, 1, false);
+
+        } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+            $this->assertEmpty(
+                $exception->getMessage(),
+                '$rawExports->saveExportReport failed '.$exception->getMessage()
+            );
+        } catch (\LCI\Salsify\Exceptions\ExportException $exception) {
+            $this->assertEmpty(
+                'error',
+                '$rawExports->saveExportReport failed '.$exception->getMessage()
+            );
+        }
+
+        $this->assertFileExists(
+            (string)$file,
+            '$rawExports->saveExportReport did not save the report contents to disk'
+        );
+    }
+
+    /**
+     * @depends testInitRawExports
+     */
     public function testAllProductsRawExports()
     {
         /** @var RawExports $rawExports */
@@ -76,7 +129,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
-    public function NOtestAllDigitalAssetsRawExports()
+    public function testAllDigitalAssetsRawExports()
     {
         /** @var RawExports $rawExports */
         $rawExports = new RawExports(self::getApiInstance());
@@ -123,7 +176,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testAllDigitalAssetsRawExports
      */
-    public function NOtestDigitalAssetsHelper()
+    public function testDigitalAssetsHelper()
     {
         $helper = new \LCI\Salsify\Helpers\DigitalAssets(self::getApiInstance());
 
@@ -148,7 +201,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
-    public function NOtestDigitalAssetListRawExports()
+    public function testDigitalAssetListRawExports()
     {
         /** @var RawExports $rawExports */
         $rawExports = new RawExports(self::getApiInstance());
@@ -196,7 +249,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
-    public function NOtestProductListRawExports()
+    public function testProductListRawExports()
     {
         /** @var RawExports $rawExports */
         $rawExports = new RawExports(self::getApiInstance());
@@ -242,7 +295,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
-    public function NOtestPropertiesRawExports()
+    public function testPropertiesRawExports()
     {
         /** @var RawExports $rawExports */
         $rawExports = new RawExports(self::getApiInstance());
@@ -288,7 +341,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testInitRawExports
      */
-    public function NOtestPropertyValuesRawExports()
+    public function testPropertyValuesRawExports()
     {
         /** @var RawExports $rawExports */
         $rawExports = new RawExports(self::getApiInstance());
@@ -334,7 +387,7 @@ class RawExportsTest extends BaseTestCase
     /**
      * @depends testPropertyValuesRawExports
      */
-    public function NOtestPropertyValuesHelper()
+    public function testPropertyValuesHelper()
     {
         $helper = new PropertyValues();
         $helper->loadSourceFromCsv(__DIR__ . '/temp/property_values.csv');

@@ -11,6 +11,7 @@ namespace LCI\Salsify;
 use phpDocumentor\Reflection\Types\This;
 use GuzzleHttp\RequestOptions;
 use LCI\Salsify\Exceptions\ExportException;
+use mysql_xdevapi\Exception;
 
 /**
  * Class Exports
@@ -187,6 +188,22 @@ class RawExports extends PreV1Routes
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
+    public function initExportAllData()
+    {
+        $this->entity_type = 'all';
+        $this->setFormat('json');
+
+        $this->product_type = 'all';
+        $this->filter = '';
+        $this->include_all_content_locales = true;
+
+        return $this->initExport();
+    }
+
+    /**
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function initExportAllDigitalAssets()
     {
         $this->entity_type = 'digital_asset';
@@ -285,29 +302,34 @@ class RawExports extends PreV1Routes
     /**
      * @param $export_id
      * @param string $file ~ the full file path to which the report will be written to
-     * @param int $attempt
+     * @param int $attempt - 1
+     * @param bool $stream
      *
      * @return string
      * @throws ExportException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function saveExportReport($export_id, $file, $attempt=1)
+    public function saveExportReport($export_id, $file, $attempt=1, $stream=true)
     {
         $exportResponse = $this->getExportRunStatus($export_id);
         $export_data = json_decode($exportResponse->getBody(), true);
 
         if (isset($export_data['status']) && $export_data['status'] == 'completed') {
-
+            //return $export_data;
             /** @var  $response */
             $guzzleClient = new \GuzzleHttp\Client([
                 // You can set any number of default request options.
-                'timeout' => 15.0,
+                'timeout' => 600.0,
                 // http://docs.guzzlephp.org/en/latest/request-options.html#http-errors
                 'http_errors' => false,
                 'verify' => false,//$verify_ssl,
             ]);
 
-            $guzzleClient->request('GET', urldecode($export_data['url']), ['sink' => $file, RequestOptions::STREAM => true]);
+            $options = ['sink' => $file];
+            if ($stream) {
+                $options[RequestOptions::STREAM] = true;
+            }
+            $guzzleClient->request('GET', urldecode($export_data['url']), $options);
 
         } else {
             if ($attempt >= $this->check_limit) {
