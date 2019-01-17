@@ -37,6 +37,10 @@ class BaseTestCase extends TestCase
             $api = new API(API_ORG_ID, API_TOKEN, API_BASE_URI);
 
             if (is_object($api)) {
+                $api
+                    ->setConnectTimeout(300)
+                    ->setReadTimeout(300)
+                    ->setTimeout(60);
                 self::$api = $api;
             }
         }

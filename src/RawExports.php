@@ -9,6 +9,7 @@
 namespace LCI\Salsify;
 
 use phpDocumentor\Reflection\Types\This;
+use GuzzleHttp\RequestOptions;
 use LCI\Salsify\Exceptions\ExportException;
 
 /**
@@ -26,8 +27,8 @@ class RawExports extends PreV1Routes
     /** @var string  */
     protected $filter = '';
 
-    /** @var string  */
-    protected $format = 'csv';// json?
+    /** @var string - csv or xlsx */
+    protected $format = 'csv';
 
     /** @var array  */
     protected $include_properties = [];
@@ -183,14 +184,26 @@ class RawExports extends PreV1Routes
     }
 
     /**
-     * @param int $list_id ~ ID of list
-     *
      * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function initExportAllDigitalAssets()
     {
         $this->entity_type = 'digital_asset';
+
+        $this->filter = '';
+        $this->include_all_content_locales = true;
+
+        return $this->initExport();
+    }
+
+    /**
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function initExportAllProducts()
+    {
+        $this->entity_type = 'product';
 
         $this->filter = '';
         $this->include_all_content_locales = true;
@@ -294,7 +307,7 @@ class RawExports extends PreV1Routes
                 'verify' => false,//$verify_ssl,
             ]);
 
-            $guzzleClient->request('GET', urldecode($export_data['url']), ['sink' => $file]);
+            $guzzleClient->request('GET', urldecode($export_data['url']), ['sink' => $file, RequestOptions::STREAM => true]);
 
         } else {
             if ($attempt >= $this->check_limit) {
