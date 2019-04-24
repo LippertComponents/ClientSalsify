@@ -338,7 +338,7 @@ class RawExports extends PreV1Routes
 
             sleep($this->status_check_delay);
 
-            return $this->saveExportReport($export_id, $file, $attempt + 1);
+            return $this->saveExportReport($export_id, $file, $attempt + 1, $stream);
         }
 
         return $file;
