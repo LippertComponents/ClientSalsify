@@ -322,14 +322,15 @@ class DigitalAsset
      */
 
     /**
-     * @return \Psr\Http\Message\ResponseInterface ~ successful status codes: 201 create and 204 for update
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface ~ successful status codes: 201 create and 204 for update
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function create()
     {
         return $this->api->doRequest(
             'POST',
             'digital_assets',
-            ['form_params' => $this->toArray('create')]
+            ['json' => $this->toArray('create')]
         );
     }
 
@@ -374,7 +375,8 @@ class DigitalAsset
     }
 
     /**
-     * @return \Psr\Http\Message\ResponseInterface ~ successful status codes: 201 create and 204 for update
+     * @return bool|\GuzzleHttp\Promise\PromiseInterface|\Psr\Http\Message\ResponseInterface ~ successful status codes: 201 create and 204 for update
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function update()
     {
@@ -382,7 +384,7 @@ class DigitalAsset
         return $this->api->doRequest(
             'PUT',
             "digital_assets/{$this->getId()}", [
-            'form_params' => $data
+            'json' => $data
         ]);
     }
 
