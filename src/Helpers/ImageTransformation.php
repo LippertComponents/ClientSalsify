@@ -53,6 +53,15 @@ class ImageTransformation
     }
 
     /**
+     * @return string ~ as ai
+     */
+    public function getURLasAI()
+    {
+        $this->extension = 'ai';
+        return $this->getUrl();
+    }
+
+    /**
      * @return string ~ as jpg
      */
     public function getURLasJPG()
